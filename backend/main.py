@@ -4,10 +4,12 @@ from pydantic import BaseModel
 from langchain_core.messages import HumanMessage
 from api.dynamic_config import api as config_router
 from api.ui_evolution import router as ui_router
+from api.evolution_api import router as evolution_router
 from workflows.supervisor import app as orbit_app
 
 api = FastAPI(title="AEGIS OS Backend")
 api.include_router(ui_router)
+api.include_router(evolution_router)
 api.mount("/config", config_router)
 
 class GoalRequest(BaseModel):
