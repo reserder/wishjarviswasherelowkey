@@ -10,16 +10,34 @@
             color: #00ffcc;
             font-family: 'Courier New', Courier, monospace;
             display: flex;
-            flex-direction: column;
-            align-items: center;
+            flex-direction: row; /* Horizontal layout for sidebar */
+            align-items: flex-start;
             justify-content: center;
             height: 100vh;
             margin: 0;
             overflow: hidden;
+            padding: 20px;
+        }
+        #sidebar {
+            width: 250px;
+            height: 80%;
+            border: 1px solid #00ffcc;
+            margin-right: 20px;
+            padding: 15px;
+            background: rgba(0, 20, 20, 0.5);
+            box-shadow: 0 0 10px #00ffcc;
+        }
+        #main-container {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            height: 100%;
+            max-width: 1000px;
         }
         #terminal {
-            width: 80%;
-            height: 60%;
+            width: 100%;
+            height: 70%;
             background: rgba(0, 0, 0, 0.9);
             border: 1px solid #00ffcc;
             box-shadow: 0 0 20px #00ffcc;
@@ -28,7 +46,7 @@
             margin-bottom: 20px;
         }
         input {
-            width: 80%;
+            width: 100%;
             background: transparent;
             border: 1px solid #00ffcc;
             color: #00ffcc;
@@ -39,14 +57,34 @@
         .user-msg { color: #fff; margin-bottom: 10px; }
         .aegis-msg { color: #00ffcc; margin-bottom: 20px; font-weight: bold; }
         .loading { font-style: italic; color: #888; }
+        .feature-item { margin-bottom: 10px; font-size: 0.9em; border-bottom: 1px solid #004444; padding-bottom: 5px; }
+        .status-online { color: #00ff00; }
     </style>
 </head>
 <body>
-    <h1>AEGIS OS v1.0 | ORBIT</h1>
-    <div id="terminal">
-        <div class="aegis-msg">SYSTEM ONLINE. Orbit ready for commands.</div>
+    <div id="sidebar">
+        <h3 style="margin-top:0">AEGIS MODULES</h3>
+        <div class="feature-item">Orbit Supervisor <span class="status-online">[ONLINE]</span></div>
+        <div class="feature-item">Forge Architect <span class="status-online">[ONLINE]</span></div>
+        <div class="feature-item">Evolution Harvester <span class="status-online">[ONLINE]</span></div>
+        <div class="feature-item">Voice Gateway <span class="status-online">[READY]</span></div>
+        <div class="feature-item">Memory Hub (Qdrant) <span style="color:yellow">[STANDBY]</span></div>
+        <div class="feature-item">GitHub Sync <span class="status-online">[ACTIVE]</span></div>
+        <div style="margin-top:20px; font-size:0.8em; color:#888;">
+            <b>Commands to try:</b><br>
+            - "evolve"<br>
+            - "create agent for [x]"<br>
+            - "status"<br>
+            - "who are you?"
+        </div>
     </div>
-    <input type="text" id="userInput" placeholder="Enter command for Orbit..." autofocus>
+    <div id="main-container">
+        <h1>AEGIS OS v1.1 | ORBIT</h1>
+        <div id="terminal">
+            <div class="aegis-msg">SYSTEM ONLINE. Modules loaded. Orbit ready.</div>
+        </div>
+        <input type="text" id="userInput" placeholder="Enter command for Orbit..." autofocus>
+    </div>
 
     <script>
         const terminal = document.getElementById('terminal');
