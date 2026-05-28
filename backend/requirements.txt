@@ -1,0 +1,10 @@
+fastapi
+uvicorn
+python-dotenv
+langchain
+langchain-openai
+langgraph
+pydantic
+qdrant-client
+psycopg2-binary
+httpx

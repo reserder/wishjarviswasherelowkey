@@ -1,0 +1,21 @@
+model_list:
+  - model_name: gemma-primary
+    litellm_params:
+      model: ollama/gemma4:e4b
+      api_base: http://host.docker.internal:11434
+  - model_name: deepseek-reasoner
+    litellm_params:
+      model: ollama/deepseek-r1:7b
+      api_base: http://host.docker.internal:11434
+  - model_name: mistral-utility
+    litellm_params:
+      model: ollama/mistral:latest
+      api_base: http://host.docker.internal:11434
+  - model_name: cloud-escalation
+    litellm_params:
+      model: ollama/qwen3.5:397b-cloud
+      api_base: http://host.docker.internal:11434
+router_settings:
+  routing_strategy: least-busy
+general_settings:
+  master_key: sk-aegis-local
