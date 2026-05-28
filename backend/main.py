@@ -7,8 +7,18 @@ from api.ui_evolution import router as ui_router
 from api.evolution_api import router as evolution_router
 from api.voice_gateway import router as voice_router
 from workflows.supervisor import app as orbit_app
+from fastapi.middleware.cors import CORSMiddleware
 
 api = FastAPI(title="AEGIS OS Backend")
+
+api.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 api.include_router(ui_router)
 api.include_router(evolution_router)
 api.include_router(voice_router)

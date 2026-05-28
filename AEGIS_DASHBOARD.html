@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AEGIS OS | Orbit Control Panel</title>
+    <style>
+        body {
+            background-color: #0a0a0a;
+            color: #00ffcc;
+            font-family: 'Courier New', Courier, monospace;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            overflow: hidden;
+        }
+        #terminal {
+            width: 80%;
+            height: 60%;
+            background: rgba(0, 0, 0, 0.9);
+            border: 1px solid #00ffcc;
+            box-shadow: 0 0 20px #00ffcc;
+            padding: 20px;
+            overflow-y: auto;
+            margin-bottom: 20px;
+        }
+        input {
+            width: 80%;
+            background: transparent;
+            border: 1px solid #00ffcc;
+            color: #00ffcc;
+            padding: 10px;
+            font-size: 1.2em;
+            outline: none;
+        }
+        .user-msg { color: #fff; margin-bottom: 10px; }
+        .aegis-msg { color: #00ffcc; margin-bottom: 20px; font-weight: bold; }
+        .loading { font-style: italic; color: #888; }
+    </style>
+</head>
+<body>
+    <h1>AEGIS OS v1.0 | ORBIT</h1>
+    <div id="terminal">
+        <div class="aegis-msg">SYSTEM ONLINE. Orbit ready for commands.</div>
+    </div>
+    <input type="text" id="userInput" placeholder="Enter command for Orbit..." autofocus>
+
+    <script>
+        const terminal = document.getElementById('terminal');
+        const input = document.getElementById('userInput');
+
+        input.addEventListener('keypress', async (e) => {
+            if (e.key === 'Enter') {
+                const goal = input.value;
+                input.value = '';
+                
+                // Display User Message
+                const userDiv = document.createElement('div');
+                userDiv.className = 'user-msg';
+                userDiv.textContent = '> ' + goal;
+                terminal.appendChild(userDiv);
+                
+                // Show Loading
+                const loadingDiv = document.createElement('div');
+                loadingDiv.className = 'loading';
+                loadingDiv.textContent = 'Orbit is thinking...';
+                terminal.appendChild(loadingDiv);
+                terminal.scrollTop = terminal.scrollHeight;
+
+                try {
+                    const response = await fetch('http://127.0.0.1:8001/orbit/execute', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ goal: goal })
+                    });
+                    
+                    const data = await response.json();
+                    terminal.removeChild(loadingDiv);
+                    
+                    const aegisDiv = document.createElement('div');
+                    aegisDiv.className = 'aegis-msg';
+                    aegisDiv.textContent = `[${data.agent.toUpperCase()}] ${data.response}`;
+                    terminal.appendChild(aegisDiv);
+                    
+                } catch (err) {
+                    terminal.removeChild(loadingDiv);
+                    const errorDiv = document.createElement('div');
+                    errorDiv.style.color = 'red';
+                    errorDiv.textContent = 'ERROR: Could not connect to AEGIS Brain. Ensure ./start-native.sh is running.';
+                    terminal.appendChild(errorDiv);
+                }
+                terminal.scrollTop = terminal.scrollHeight;
+            }
+        });
+    </script>
+</body>
+</html>
