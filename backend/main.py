@@ -6,6 +6,7 @@ from api.dynamic_config import api as config_router
 from api.ui_evolution import router as ui_router
 from api.evolution_api import router as evolution_router
 from api.voice_gateway import router as voice_router
+from api.connectors_hub import router as connectors_router
 from workflows.supervisor import app as orbit_app
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -22,6 +23,7 @@ api.add_middleware(
 api.include_router(ui_router)
 api.include_router(evolution_router)
 api.include_router(voice_router)
+api.include_router(connectors_router)
 api.mount("/config", config_router)
 
 class GoalRequest(BaseModel):

@@ -70,6 +70,19 @@ export default function AegisDashboard() {
         </div>
 
         <div className="pt-6 border-t border-white/5 space-y-4">
+          <div className="text-xs text-slate-500 uppercase tracking-widest font-semibold flex items-center justify-between">
+            <span>Connectors</span>
+            <span className="text-[10px] bg-cyan-500/10 text-cyan-400 px-2 rounded cursor-pointer hover:bg-cyan-500/20">Marketplace</span>
+          </div>
+          <div className="grid grid-cols-2 gap-2">
+            <ConnectorButton name="Drive" status="Add" color="amber" />
+            <ConnectorButton name="GitHub" status="Active" color="emerald" />
+            <ConnectorButton name="Search" status="Add" color="blue" />
+            <ConnectorButton name="Gmail" status="Add" color="red" />
+          </div>
+        </div>
+
+        <div className="pt-6 border-t border-white/5 space-y-4">
           <div className="text-xs text-slate-500 uppercase tracking-widest font-semibold">Intelligence Hub</div>
           <div className="flex justify-between items-center text-sm">
             <span className="text-slate-400">Memory (Qdrant)</span>
@@ -155,6 +168,21 @@ export default function AegisDashboard() {
           </div>
         </div>
       </main>
+    </div>
+  );
+}
+
+function ConnectorButton({ name, status, color }: { name: string, status: string, color: string }) {
+  const colors: Record<string, string> = {
+    amber: "bg-amber-500/10 text-amber-400 border-amber-500/20 hover:bg-amber-500/20",
+    emerald: "bg-emerald-500/10 text-emerald-400 border-emerald-500/20 hover:bg-emerald-500/20",
+    blue: "bg-blue-500/10 text-blue-400 border-blue-500/20 hover:bg-blue-500/20",
+    red: "bg-red-500/10 text-red-400 border-red-500/20 hover:bg-red-500/20",
+  };
+  return (
+    <div className={`p-2 rounded-lg border text-center cursor-pointer transition-all ${colors[color]}`}>
+      <div className="text-[10px] font-bold uppercase">{name}</div>
+      <div className="text-[8px] opacity-70 tracking-widest">{status}</div>
     </div>
   );
 }
