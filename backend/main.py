@@ -5,11 +5,13 @@ from langchain_core.messages import HumanMessage
 from api.dynamic_config import api as config_router
 from api.ui_evolution import router as ui_router
 from api.evolution_api import router as evolution_router
+from api.voice_gateway import router as voice_router
 from workflows.supervisor import app as orbit_app
 
 api = FastAPI(title="AEGIS OS Backend")
 api.include_router(ui_router)
 api.include_router(evolution_router)
+api.include_router(voice_router)
 api.mount("/config", config_router)
 
 class GoalRequest(BaseModel):
@@ -35,4 +37,4 @@ async def execute_goal(request: GoalRequest):
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run(api, host="0.0.0.0", port=8000)
+    uvicorn.run(api, host="0.0.0.0", port=8001)

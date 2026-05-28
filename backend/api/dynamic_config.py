@@ -2,7 +2,7 @@ import os
 from fastapi import FastAPI, HTTPException, Body
 from pydantic import BaseModel
 from typing import Dict, Any, List
-from .database.qdrant_client import memory_db
+from database.qdrant_client import memory_db
 
 api = FastAPI(title="AEGIS Dynamic OS Config")
 

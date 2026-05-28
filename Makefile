@@ -15,6 +15,10 @@ logs:
 status:
 	docker compose ps
 
+# Run the supervisor natively for maximum speed
+run-native:
+	env PYTHONPATH=.:backend ./venv/bin/python3 backend/main.py
+
 # Run the supervisor locally (requires venv)
 run-local:
 	source venv/bin/activate && python backend/main.py

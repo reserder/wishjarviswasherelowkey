@@ -8,3 +8,4 @@ pydantic
 qdrant-client
 psycopg2-binary
 httpx
+PyGithub
