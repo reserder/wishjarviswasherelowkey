@@ -3,91 +3,227 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AEGIS OS | Orbit Control Panel</title>
+    <title>AEGIS OS | COMMAND CENTER</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
     <style>
+        :root {
+            --bg: #05070a;
+            --glass: rgba(15, 20, 30, 0.7);
+            --neon: #00f2ff;
+            --accent: #7000ff;
+            --text: #e0e6ed;
+            --border: rgba(0, 242, 255, 0.2);
+        }
+
+        * { box-sizing: border-box; }
         body {
-            background-color: #0a0a0a;
-            color: #00ffcc;
-            font-family: 'Courier New', Courier, monospace;
-            display: flex;
-            flex-direction: row; /* Horizontal layout for sidebar */
-            align-items: flex-start;
-            justify-content: center;
-            height: 100vh;
+            background: radial-gradient(circle at top right, #1a0b3a 0%, var(--bg) 60%);
+            color: var(--text);
+            font-family: 'Inter', sans-serif;
             margin: 0;
-            overflow: hidden;
-            padding: 20px;
-        }
-        #sidebar {
-            width: 250px;
-            height: 80%;
-            border: 1px solid #00ffcc;
-            margin-right: 20px;
+            height: 100vh;
+            display: grid;
+            grid-template-columns: 280px 1fr 320px;
+            grid-template-rows: 60px 1fr 100px;
+            gap: 15px;
             padding: 15px;
-            background: rgba(0, 20, 20, 0.5);
-            box-shadow: 0 0 10px #00ffcc;
+            overflow: hidden;
         }
-        #main-container {
-            flex-grow: 1;
+
+        /* Glassmorphism Utility */
+        .glass {
+            background: var(--glass);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+        }
+
+        /* Header */
+        header {
+            grid-column: 1 / -1;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 25px;
+            font-weight: 600;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            border-bottom: 2px solid var(--neon);
+        }
+        .logo { font-size: 1.5em; color: var(--neon); text-shadow: 0 0 10px var(--neon); }
+
+        /* Sidebar: System Nodes */
+        #nodes-sidebar {
             display: flex;
             flex-direction: column;
-            align-items: center;
-            height: 100%;
-            max-width: 1000px;
+            padding: 20px;
+            gap: 20px;
         }
-        #terminal {
-            width: 100%;
-            height: 70%;
-            background: rgba(0, 0, 0, 0.9);
-            border: 1px solid #00ffcc;
-            box-shadow: 0 0 20px #00ffcc;
+        .section-title { font-size: 0.8em; color: #6b7280; text-transform: uppercase; margin-bottom: 10px; }
+        .node-card {
+            padding: 12px;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .node-card:hover { border-color: var(--neon); background: rgba(0, 242, 255, 0.05); }
+        .node-status { width: 8px; height: 8px; border-radius: 50%; background: #00ff00; box-shadow: 0 0 5px #00ff00; }
+
+        /* Main: Neural Visualization & Terminal */
+        main {
+            display: grid;
+            grid-template-rows: 1fr 200px;
+            gap: 15px;
+        }
+        #visualizer {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            background: url('https://www.transparenttextures.com/patterns/carbon-fibre.png'), rgba(0,0,0,0.2);
+        }
+        .neural-core {
+            width: 150px;
+            height: 150px;
+            border: 2px solid var(--neon);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 0 50px rgba(0, 242, 255, 0.3);
+            animation: pulse 4s infinite;
+        }
+        @keyframes pulse { 0% { transform: scale(1); box-shadow: 0 0 50px rgba(0, 242, 255, 0.3); } 50% { transform: scale(1.05); box-shadow: 0 0 80px rgba(0, 242, 255, 0.5); } 100% { transform: scale(1); box-shadow: 0 0 50px rgba(0, 242, 255, 0.3); } }
+
+        #terminal-area {
+            font-family: 'JetBrains Mono', monospace;
             padding: 20px;
             overflow-y: auto;
-            margin-bottom: 20px;
+            font-size: 0.9em;
+        }
+        .user-line { color: #888; margin-top: 10px; }
+        .aegis-line { color: var(--neon); margin-bottom: 10px; border-left: 2px solid var(--neon); padding-left: 10px; }
+
+        /* Sidebar: Integrations */
+        #integrations-sidebar {
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        .integration-card {
+            padding: 15px;
+            background: rgba(255,255,255,0.02);
+            border-radius: 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .int-header { display: flex; justify-content: space-between; align-items: center; }
+        .int-badge { font-size: 0.7em; background: var(--accent); padding: 2px 8px; border-radius: 4px; }
+
+        /* Footer: Command Input */
+        footer {
+            grid-column: 1 / -1;
+            display: flex;
+            align-items: center;
+            padding: 0 20px;
         }
         input {
             width: 100%;
-            background: transparent;
-            border: 1px solid #00ffcc;
-            color: #00ffcc;
-            padding: 10px;
-            font-size: 1.2em;
+            height: 60px;
+            background: rgba(0,0,0,0.3);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 0 25px;
+            color: var(--neon);
+            font-size: 1.1em;
             outline: none;
+            box-shadow: inset 0 0 10px rgba(0,0,0,0.5);
         }
-        .user-msg { color: #fff; margin-bottom: 10px; }
-        .aegis-msg { color: #00ffcc; margin-bottom: 20px; font-weight: bold; }
-        .loading { font-style: italic; color: #888; }
-        .feature-item { margin-bottom: 10px; font-size: 0.9em; border-bottom: 1px solid #004444; padding-bottom: 5px; }
-        .status-online { color: #00ff00; }
+        input:focus { border-color: var(--neon); box-shadow: 0 0 15px rgba(0, 242, 255, 0.2); }
+
     </style>
 </head>
 <body>
-    <div id="sidebar">
-        <h3 style="margin-top:0">AEGIS MODULES</h3>
-        <div class="feature-item">Orbit Supervisor <span class="status-online">[ONLINE]</span></div>
-        <div class="feature-item">Forge Architect <span class="status-online">[ONLINE]</span></div>
-        <div class="feature-item">Evolution Harvester <span class="status-online">[ONLINE]</span></div>
-        <div class="feature-item">Voice Gateway <span class="status-online">[READY]</span></div>
-        <div class="feature-item">Memory Hub (Qdrant) <span style="color:yellow">[STANDBY]</span></div>
-        <div class="feature-item">GitHub Sync <span class="status-online">[ACTIVE]</span></div>
-        <div style="margin-top:20px; font-size:0.8em; color:#888;">
-            <b>Commands to try:</b><br>
-            - "evolve"<br>
-            - "create agent for [x]"<br>
-            - "status"<br>
-            - "who are you?"
+    <header class="glass">
+        <div class="logo">AEGIS OS // ORBIT</div>
+        <div id="sys-time">SYSTEM CLOCK: 2026.05.28 14:30:12</div>
+    </header>
+
+    <aside id="nodes-sidebar" class="glass">
+        <div class="section-title">Active Specialists</div>
+        <div class="node-card">
+            <div class="node-status"></div>
+            <div><strong>Orbit</strong><br><small>Supervisor v1.2</small></div>
         </div>
-    </div>
-    <div id="main-container">
-        <h1>AEGIS OS v1.1 | ORBIT</h1>
-        <div id="terminal">
-            <div class="aegis-msg">SYSTEM ONLINE. Modules loaded. Orbit ready.</div>
+        <div class="node-card">
+            <div class="node-status"></div>
+            <div><strong>Forge</strong><br><small>Architect Mode</small></div>
         </div>
-        <input type="text" id="userInput" placeholder="Enter command for Orbit..." autofocus>
-    </div>
+        <div class="node-card">
+            <div class="node-status" style="background: #aaa; box-shadow: none;"></div>
+            <div><strong>Mercury</strong><br><small>Deep Research</small></div>
+        </div>
+        <div class="node-card">
+            <div class="node-status"></div>
+            <div><strong>Evolver</strong><br><small>Self-Harvesting</small></div>
+        </div>
+    </aside>
+
+    <main>
+        <div id="visualizer" class="glass">
+            <div class="neural-core">ORBIT</div>
+            <div style="position:absolute; bottom:20px; left:20px; font-size:0.7em; color:var(--neon)">NEURAL MAPPING: ACTIVE</div>
+        </div>
+        <div id="terminal-area" class="glass">
+            <div class="aegis-line">AEGIS OS LOADED. ALL CONNECTORS INITIALIZED. READY FOR COMMAND.</div>
+        </div>
+    </main>
+
+    <aside id="integrations-sidebar" class="glass">
+        <div class="section-title">Connectors Hub</div>
+        <div class="integration-card">
+            <div class="int-header">
+                <strong>GitHub</strong>
+                <span class="int-badge">CONNECTED</span>
+            </div>
+            <small>wishjarviswasherelowkey</small>
+        </div>
+        <div class="integration-card">
+            <div class="int-header">
+                <strong>Alexa / Echo</strong>
+                <span class="int-badge" style="background:#555">READY</span>
+            </div>
+            <small>Webhook: /voice/alexa</small>
+        </div>
+        <div class="integration-card">
+            <div class="int-header">
+                <strong>Ollama</strong>
+                <span class="int-badge">LOCAL GPU</span>
+            </div>
+            <small>Models: gemma, deepseek</small>
+        </div>
+        <div class="integration-card">
+            <div class="int-header">
+                <strong>Open Design</strong>
+                <span class="int-badge">ACTIVE</span>
+            </div>
+            <small>UI Evolve patterns loaded.</small>
+        </div>
+    </aside>
+
+    <footer class="glass">
+        <input type="text" id="userInput" placeholder="// ENTER COMMAND: EXECUTE EVOLUTION OR REQUEST ACTION..." autofocus>
+    </footer>
 
     <script>
-        const terminal = document.getElementById('terminal');
+        const terminal = document.getElementById('terminal-area');
         const input = document.getElementById('userInput');
 
         input.addEventListener('keypress', async (e) => {
@@ -95,19 +231,11 @@
                 const goal = input.value;
                 input.value = '';
                 
-                // Display User Message
                 const userDiv = document.createElement('div');
-                userDiv.className = 'user-msg';
-                userDiv.textContent = '> ' + goal;
+                userDiv.className = 'user-line';
+                userDiv.textContent = '>> ' + goal;
                 terminal.appendChild(userDiv);
                 
-                // Show Loading
-                const loadingDiv = document.createElement('div');
-                loadingDiv.className = 'loading';
-                loadingDiv.textContent = 'Orbit is thinking...';
-                terminal.appendChild(loadingDiv);
-                terminal.scrollTop = terminal.scrollHeight;
-
                 try {
                     const response = await fetch('http://127.0.0.1:8001/orbit/execute', {
                         method: 'POST',
@@ -116,23 +244,26 @@
                     });
                     
                     const data = await response.json();
-                    terminal.removeChild(loadingDiv);
-                    
                     const aegisDiv = document.createElement('div');
-                    aegisDiv.className = 'aegis-msg';
-                    aegisDiv.textContent = `[${data.agent.toUpperCase()}] ${data.response}`;
+                    aegisDiv.className = 'aegis-line';
+                    aegisDiv.textContent = `[${data.agent.toUpperCase()}]: ${data.response}`;
                     terminal.appendChild(aegisDiv);
                     
                 } catch (err) {
-                    terminal.removeChild(loadingDiv);
                     const errorDiv = document.createElement('div');
                     errorDiv.style.color = 'red';
-                    errorDiv.textContent = 'ERROR: Could not connect to AEGIS Brain. Ensure ./start-native.sh is running.';
+                    errorDiv.textContent = 'SYSTEM ERROR: CONNECTION TO CORE LOST.';
                     terminal.appendChild(errorDiv);
                 }
                 terminal.scrollTop = terminal.scrollHeight;
             }
         });
+
+        // Dynamic System Clock
+        setInterval(() => {
+            const now = new Date();
+            document.getElementById('sys-time').textContent = 'SYSTEM CLOCK: ' + now.toISOString().replace('T', ' ').split('.')[0];
+        }, 1000);
     </script>
 </body>
 </html>
