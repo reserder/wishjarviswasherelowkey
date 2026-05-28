@@ -1,53 +1,56 @@
-aegis-backend:
-  build:
-    context: ./backend
-    dockerfile: Dockerfile
-  container_name: aegis-backend
-  restart: always
-  ports:
-    - "8001:8001"
-  environment:
-    - LITELLM_BASE_URL=http://litellm:4000/v1
-    - LITELLM_API_KEY=sk-aegis-local
-    - QDRANT_URL=http://qdrant:6333
-    - NEO4J_URI=bolt://neo4j:7687
-  extra_hosts:
-    - "host.docker.internal:host-gateway"
-  depends_on:
-    - litellm
-    - qdrant
-open-webui:
-  image: ghcr.io/open-webui/open-webui:main
-  container_name: aegis-hq
-  restart: always
-  ports:
-    - "3000:8080"
-  volumes:
-    - ./openwebui:/app/backend/data
-  environment:
-    - OLLAMA_BASE_URL=http://host.docker.internal:11434
-    - OPENAI_API_BASE_URL=http://aegis-backend:8001/v1
-    - OPENAI_API_KEY=sk-aegis-local
-    - WEBUI_NAME=Aegis AI OS
-    - ENABLE_RAG_WEB_SEARCH=true
-    - RAG_EMBEDDING_ENGINE=ollama
-    - RAG_EMBEDDING_MODEL=nomic-embed-text
-    - ENABLE_RAG_HYBRID_SEARCH=true
-    - ENABLE_COMMUNITY_SHARING=false
-  extra_hosts:
-    - "host.docker.internal:host-gateway"
-  depends_on:
-    - aegis-backend
-litellm:
-...
-windmill:
-  image: ghcr.io/windmill-labs/windmill:main
-  container_name: aegis-automation
-  restart: always
-  ports:
-    - "8000:8000"
+services:
+  aegis-backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: aegis-backend
+    restart: always
+    ports:
+      - "8001:8001"
+    environment:
+      - LITELLM_BASE_URL=http://litellm:4000/v1
+      - LITELLM_API_KEY=sk-aegis-local
+      - QDRANT_URL=http://qdrant:6333
+      - NEO4J_URI=bolt://neo4j:7687
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    depends_on:
+      - litellm
+      - qdrant
+
+  open-webui:
+    image: ghcr.io/open-webui/open-webui:main
+    container_name: aegis-hq
+    restart: always
+    ports:
+      - "3000:8080"
+    volumes:
+      - ./openwebui:/app/backend/data
+    environment:
+      - OLLAMA_BASE_URL=http://host.docker.internal:11434
+      - OPENAI_API_BASE_URL=http://aegis-backend:8001/v1
+      - OPENAI_API_KEY=sk-aegis-local
+      - WEBUI_NAME=Aegis AI OS
+      - ENABLE_RAG_WEB_SEARCH=true
+      - RAG_EMBEDDING_ENGINE=ollama
+      - RAG_EMBEDDING_MODEL=nomic-embed-text
+      - ENABLE_RAG_HYBRID_SEARCH=true
+      - ENABLE_COMMUNITY_SHARING=false
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    depends_on:
+      - aegis-backend
+
+  litellm:
+    image: ghcr.io/berriai/litellm:main-latest
+    container_name: aegis-router
+    restart: always
+    ports:
+      - "4000:4000"
+    volumes:
       - ./configs/litellm_config.yaml:/app/config.yaml
     command: ["--config", "/app/config.yaml", "--port", "4000"]
+
   qdrant:
     image: qdrant/qdrant:latest
     container_name: aegis-vectordb
@@ -56,6 +59,7 @@ windmill:
       - "6333:6333"
     volumes:
       - ./qdrant_storage:/qdrant/storage
+
   windmill:
     image: ghcr.io/windmill-labs/windmill:main
     container_name: aegis-automation
@@ -67,6 +71,7 @@ windmill:
       - BASE_URL=http://localhost:8000
     depends_on:
       - windmill-db
+
   windmill-db:
     image: postgres:15
     container_name: aegis-windmill-db
@@ -77,6 +82,7 @@ windmill:
       - POSTGRES_PASSWORD=windmill
     volumes:
       - ./windmill/db:/var/lib/postgresql/data
+
   neo4j:
     image: neo4j:5
     container_name: aegis-graphdb
